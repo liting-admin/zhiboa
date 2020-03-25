@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge" >
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <title>Aliplayer Online Settings</title>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.7/skins/default/aliplayer-min.css" />
+    <script type="text/javascript" charset="utf-8" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.js"></script>
+
+</head>
+<>
+<div style="float: right">
+    <div style="width: 520px; height: 600px; border: 1px solid black;overflow-y: auto;float: right;margin-left: 80px" id="list" >
+        <span><input type="button" value="大家聊天" style="width: 80px;height: 80px;border-radius: 50px 50px 50px 50px;background-color: #339933"id="da"></span>
+        <span style="float: right"><input type="button" value="粉丝榜" style="width: 80px;height: 80px;border-radius: 50px 50px 50px 50px;background-color:#FF9900" id="fen"></span>
+        <span id="rr" style="width: 400px;height: auto;"></span>
+        <spn id="bqs" style="width: 400px;height: auto;margin-left: 437px;float: right;"></spn>
+
+
+    </div>
+</div>
+<span style="padding: 3px 5px 15px 20px;font-size: 23px;color: #0f0f0f"> -------------❤-----------❤---------欢迎进入斗鱼直播-------❤----------❤-------</span>
+<div class="prism-player" id="player-con"></div>
+<span style="padding: 3px 5px 15px 20px;font-size: 23px;color: #0f0f0f"> -------❤-------点击下方送礼物-----------❤--------------❤-------------❤-------</span>
+<div style="margin-left: 400px">
+    <span style="padding: 9px 60px 15px 14px;"id="huo"> 火箭</span>
+    <span style="padding: 9px 55px 15px 14px;"> 游艇</span>
+    <span style="padding: 9px 55px 15px 14px;"> 跑车</span>
+    <span style="padding: 9px 50px 15px 10px;">钻石</span>
+    <span style="padding: 9px 0px 15px 14px;"> 鲜花</span>
+    <img src="/static/image/huojiana.jpg" id="" alt="" style="width: 70px;height: 70px;padding: 12px">
+    <img src="/static/image/youtinga.jpg" id="" alt="" style="width: 70px;height: 70px;padding: 12px">
+    <img src="/static/image/paoche.jpg" id="" alt="" style="width: 70px;height: 70px;padding: 12px">
+    <img src="/static/image/zuanshia.jpg" id="" alt="" style="width: 70px;height: 70px;padding: 12px">
+    <img src="/static/image/xianhua.jpg" id="" alt="" style="width: 70px;height: 70px;padding: 12px">
+    <span style="padding: 3px 35px 15px 14px;" ><input type="submit" value="10000"id="jian" >$</span>
+    <span style="padding: 3px 40px 15px 14px;"> <input type="submit" value="1000" id="ting">$</span>
+    <span style="padding: 3px 40px 15px 14px;"> <input type="submit" value="100" id="pao">$</span>
+    <span style="padding: 3px 25px 15px 10px;"> <input type="submit" value="10" id="zuan">$</span>
+    <span style="padding: 3px 30px 15px 14px;"> <input type="submit" value="1" id="hua">$</span>
+</div>
+
+<div style="margin-left: 1150px">
+    <input type="text" id="message">
+    <input type="button" value="发送" id="fa">
+    <div id="bqlist" style="width: 400px;height: auto;float: right"></div>
+</div>
+
+
+
+<script>
+    var player = new Aliplayer({
+            "id": "player-con",
+            "source": "rtmp://youke.litingstudio.top/mysirstvideo/video?auth_key=1583077750-0-0-f562fa93ad2969d16101da5a3f5fced0",
+            "width": "900px",
+            "height": "480px",
+            "autoplay": true,
+            "isLive": false,
+            "rePlay": false,
+            "playsinline": true,
+            "preload": true,
+            "controlBarVisibility": "hover",
+            "useH5Prism": true
+        }, function (player) {
+            console.log("The player is created");
+        }
+    );
+
+    var username = prompt('请输入用户名');
+    var ws = new WebSocket("ws://114.55.35.240:9502");
+    ws.onopen = function() {
+        var message = '{"type":"login","con":"' + username + '"}';
+        ws.send(message);
+    }
+    ws.onmessage = function(res) {
+        var data = JSON.parse(res.data);
+        console.log(data);
+        if (data.is_me == 1 && data.type=='login') {
+            var con = "<p style='text-align:center'>尊敬的用户：" + data.username + "欢迎光临</p>";
+        } else if (data.is_me == 0 && data.type=='login') {
+            var con = "<p style='text-align:center'><span style='color: red'>系统提示：</span>你的好友" + data.username + "上线啦！</p>";
+
+        }else if(data.is_me == 1&& data.type=='message'){
+            var con = "<div align='right'><p style='margin-left: 20px;'>❤您的消息❤</p><p style='border:1px solid #ff0000;margin-right: 20px;width: 40%;height: auto;border-radius: inherit;background-color:#f1b0b7;'>"+data.message+"</p></div>";
+        }else if(data.is_me == 0 && data.type=='message'){
+            var con = "<div align='left'><p style='margin-left: 20px;'>❤来自"+data.username+"的消息❤</p><p style='border:1px solid #ff0000;margin-right: 20px;width: 40%;height: auto;border-radius: inherit;background-color:#f1b0b7;'>"+data.message+"</p></div>";
+
+        }else if(data.is_me == 0 && data.type=='loginout'){
+            var con = "<p style='text-align:center'><span style='color: red'>系统提示：</span>你的好友" + data.username + "下线啦！</p>";
+        }
+        console.log(con);
+        $("#list").append(con);
+    }
+    $(document).on("click","#fa",function(){
+        var con = $("#message").val();
+        var message = '{"type":"message","con":"' +con+ '"}';
+        ws.send(message);
+    })
+    $(document).on('click','#bq',function(){
+        $.ajax({
+            url:'./bq.php',
+            datatype:'json',
+            success:function(res){
+                //如果返回值是纯黑色字体 是字符串
+                var data = eval("("+res+")")// 使用这个函数转换
+                var img ="";
+                for (var i in data){
+                    img +="<img class='bqli' src='./bq/"+data[i]+"' style='width:80px;height:80px'>";
+
+                }
+                $("#bqlist").html(img);
+            }
+        })
+    })
+    $(document).on('click','.bqli',function () {
+        var src = $(this).attr('src');
+        var con ="<img src='"+src+"' style='width:100px;height:100px'>";
+        var message = '{"type":"message","con":"' +con+ '"}';
+        ws.send(message);
+    })
+    $(document).ready(function(){
+    $(document).on('click','#jian',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/money',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                  alert('成功送出一个火箭');
+                }
+            }
+        })
+
+    })
+
+    $(document).on('click','#ting',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/money',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                    alert('成功送出一艘游艇');
+                }
+            }
+        })
+    })
+    $(document).on('click','#pao',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/money',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                    alert('成功送出一辆跑车');
+                }
+            }
+        })
+    })
+    $(document).on('click','#zuan',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/money',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                    alert('成功送出一颗钻石');
+                }
+            }
+        })
+    })
+    $(document).on('click','#hua',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/money',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                    alert('成功送出一朵花');
+                }
+            }
+        })
+    })
+
+
+    $(document).on('click','#fen',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/fen',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                     // console.log(res);
+                    var data = eval("("+res+")")// 使用这个函数转换
+                    var tt ="";
+                    for (var i in data){
+                        tt+="<div style='border: 1px solid black;width:80px;height:80px;background-color: #e0a800'id=''><span>对应积分:</span>"+data[i]+"</div>";
+
+                    }
+                    $("#bqs").html(tt);
+                }
+            }
+        })
+
+    })
+
+
+    $(document).on('click','#fen',function(){
+        var _this = $(this);
+        var money = _this.val();
+        $.ajax({
+            url:'index/fens',
+            method:'post',
+            datatype:'json',
+            data: {money:money},
+            success:function(res){
+                if(res){
+                    // console.log(res);
+                    // var data = eval("("+res+")")// 使用这个函数转换
+                    var tt ="";
+                    for (var i in res){
+                        tt+="<div style='border: 1px solid black;width:80px;height:80px;background-color: #2d6987'id=''><p>列表:</p>"+res[i]+"</div>";
+
+                    }
+                    $("#rr").html(tt);
+                }
+            }
+        })
+
+    })
+    });
+</script>
+</body>
