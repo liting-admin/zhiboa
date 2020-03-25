@@ -5,17 +5,41 @@ use App\Http\Controllers\Controller;
 use App\Reg as Wd;
 use App\Log as Ws;
 use Illuminate\Http\Request;
+use QRcode;
 
 class IndexController extends Controller
 {
-    public function index(){
-        $name = session('name');
-        $data = Wd::where('uname','=',$name)->first();
-        return view('index/index',['data'=>$data['id']]);
-    }
+//    public function index(){
+//        $name = session('name');
+//        $data = Wd::where('uname','=',$name)->first();
+//        return view('index/index',['data'=>$data['id']]);
+//    }
+public function index(){
+    echo $_GET['echostr'];
+}
     public function login()
     {
-        echo '23';
+        $url = storage_path('app/public/phpqrcode.php');
+        include ($url);
+        $obj = new QRcode();
+        $uid = uniqid();
+//        echo $uid;die;
+        $url_s ="http://www.litingstudio.top/imag?uid=".$uid;
+        $obj->png($url_s,storage_path('app/public/1.png'));
+    }
+    public function image()
+    {
+        $uid = $_GET['uid'];
+        $appid = 'wx9e2acea263c04928';
+        $uri = urlencode("http://www.litingstudio.top/log");
+        $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=$uri&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+    }
+    public function log(){
+    echo $_GET['code'];
+    }
+    public function ing()
+    {
+        return view('index/image');
     }
     public function reg()
     {
