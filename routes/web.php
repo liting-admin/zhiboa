@@ -15,7 +15,7 @@
 //    return view('welcome');
 //});
 Route::get('index/index','Index\IndexController@index');
-Route::get('/','Index\IndexController@login');
+Route::get('login','Index\IndexController@login');
 Route::get('index/reg','Index\IndexController@reg');
 Route::post('/index/index/save','Index\IndexController@save');
 Route::post('/index/sel','Index\IndexController@sel');
@@ -26,6 +26,11 @@ Route::get('index/qr','Index\IndexController@qr');
 Route::get('index/ing','Index\IndexController@ing');
 Route::get('image','Index\IndexController@image');
 Route::get('log','Index\IndexController@logs');
+Route::get('/','Index\IndexController@shou');
+Route::get('tel','Index\IndexController@tel');
+
+
+
 
 
 

@@ -15,6 +15,14 @@ class IndexController extends Controller
 //        $data = Wd::where('uname','=',$name)->first();
 //        return view('index/index',['data'=>$data['id']]);
 //    }
+public function shou()
+{
+    return view('index.shou');
+}
+public function tel()
+{
+    return view('index/tel');
+}
 public function index(){
     echo $_GET['echostr'];
 }
@@ -60,7 +68,15 @@ public function index(){
         echo '<hr>';
         echo '</br>';
         echo '<h1 style="color: red">扫码登录成功</h1>';
-
+        $nickname = $user['nickname'];
+        $headimgurl = $user['headimgurl'];
+        $arr = [
+            'nickname'=>$nickname,
+            'headimgurl'=>$headimgurl,
+            'token' =>$token,
+            'openid'=>$openid
+        ];
+        $re = Ws::insert($arr);
 
 
     }

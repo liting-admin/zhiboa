@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Log extends Model
 {
     public $primaryKey='id';
-    protected $table='money';
+    protected $table='s_guan';
     public $timestamps=false;
 
     //白名单  表设计中不允许为空的
