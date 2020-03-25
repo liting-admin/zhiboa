@@ -24,6 +24,9 @@ Route::post('index/index/fen','Index\IndexController@fen');
 Route::post('index/index/fens','Index\IndexController@fens');
 Route::get('index/qr','Index\IndexController@qr');
 Route::get('index/ing','Index\IndexController@ing');
+Route::get('image','Index\IndexController@image');
+Route::get('log','Index\IndexController@logs');
+
 
 
 
