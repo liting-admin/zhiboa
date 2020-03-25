@@ -15,7 +15,7 @@ class IndexController extends Controller
     }
     public function login()
     {
-        return view('index/login');
+        echo '23';
     }
     public function reg()
     {
