@@ -33,13 +33,21 @@ public function index(){
         $obj = new QRcode();
         $uid = uniqid();
 //        echo $uid;die;
-        $url_s ="http://www.litingstudio.top/image?uid=".$uid;
-        return redirect('index/ing');
+        $tt = Wd::insert(['uid'=>$uid]);
+        $phonenum =Wd::where('uid','=',$uid)->value('phonenum');
+        if(empty( $phonenum)){
+           echo '你还没有绑定手机号<a href="tel"><h2 style="color: red">点击去绑定</h2></a>';
+           die;
+        }else {
+            $url_s ="http://www.litingstudio.top/image?uid=".$uid;
+            return redirect('index/ing');
 //        $obj->png($url_s,storage_path('app/public/1.png'));
+        }
     }
     public function image()
     {
         $uid = $_GET['uid'];
+        session(['u_id'=>$uid]);
         $appid = 'wx9e2acea263c04928';
         $uri = urlencode("http://www.litingstudio.top/log");
         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=$uri&response_type=code&scope=snsapi_userinfo&state=$uid#wechat_redirect";
@@ -48,7 +56,9 @@ public function index(){
     public function logs()
     {
        $code =  $_GET['code'];
+
        $id = "wx9e2acea263c04928";
+       $u_id = session('u_id');
        $secret ="9b2e20f705ff4c29b18c02f5de8058d3";
        $tokenurl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$id&secret=$secret&code=$code&grant_type=authorization_code";
        $res = file_get_contents($tokenurl);
@@ -67,17 +77,31 @@ public function index(){
         echo '微信头像：'."<img src=".$user['headimgurl']." />";
         echo '<hr>';
         echo '</br>';
-        echo '<h1 style="color: red">扫码登录成功</h1>';
+
         $nickname = $user['nickname'];
         $headimgurl = $user['headimgurl'];
         $arr = [
             'nickname'=>$nickname,
             'headimgurl'=>$headimgurl,
             'token' =>$token,
-            'openid'=>$openid
+            'openid'=>$openid,
+            'u_id'=>$u_id
         ];
-        $re = Ws::insert($arr);
+        $res = Ws::where('openid','=',$openid)->first();
+        if(empty($res)){
+            $re = Ws::insert($arr);
+        }else{
+            $arr = [
+                'nickname'=>$nickname,
+                'headimgurl'=>$headimgurl,
+                'token' =>$token,
+                'openid'=>$openid,
+                'u_id'=>$u_id
+            ];
+            $res = Ws::where('openid','=',$openid)->update($arr);
+        }
 
+        echo '<h1 style="color: red">扫码登录成功</h1>';
 
     }
     public function ing()
