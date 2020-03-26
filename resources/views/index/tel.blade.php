@@ -6,12 +6,12 @@
 </head>
 <body>
 <form action="index/save" method="post">
-
+@csrf
     <table>
         <tr>
             <td>手机号：</td>
             <td>
-                <input type="shou" name="phone">
+                <input type="tel" name="phonenum">
             </td>
         </tr>
         <tr>

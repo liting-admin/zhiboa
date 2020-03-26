@@ -7,6 +7,7 @@ use App\Log as Ws;
 use Illuminate\Http\Request;
 use QRcode;
 use think\response\Jsonp;
+use think\Session;
 
 class IndexController extends Controller
 {
@@ -15,99 +16,132 @@ class IndexController extends Controller
 //        $data = Wd::where('uname','=',$name)->first();
 //        return view('index/index',['data'=>$data['id']]);
 //    }
-public function shou()
-{
-    return view('index.shou');
-}
-public function tel()
-{
-    return view('index/tel');
-}
-public function index(){
-    echo $_GET['echostr'];
-}
+    public function shou()
+    {
+        return view('index.shou');
+    }
+
+    public function tel()
+    {
+        return view('index/tel');
+    }
+
+    public function index()
+    {
+        echo $_GET['echostr'];
+    }
+
     public function login()
     {
         $url = storage_path('app/public/phpqrcode.php');
-        include ($url);
+        include($url);
         $obj = new QRcode();
         $uid = uniqid();
 //        echo $uid;die;
-        $tt = Wd::insert(['uid'=>$uid]);
-        $phonenum =Wd::where('uid','=',$uid)->value('phonenum');
-        if(empty( $phonenum)){
-           echo '你还没有绑定手机号<a href="tel"><h2 style="color: red">点击去绑定</h2></a>';
-           die;
-        }else {
-            $url_s ="http://www.litingstudio.top/image?uid=".$uid;
+        $tt = Wd::insert(['uid' => $uid]);
+        $phonenum = Wd::where('uid', '=', $uid)->value('phonenum');
+        if (empty($phonenum)) {
+            echo '你还没有绑定手机号<a href="tel"><h2 style="color: red">点击去绑定</h2></a>';
+            die;
+        } else {
+            $url_s = "http://www.litingstudio.top/image?uid=" . $uid;
             return redirect('index/ing');
 //        $obj->png($url_s,storage_path('app/public/1.png'));
         }
     }
+
     public function image()
     {
         $uid = $_GET['uid'];
-        session(['u_id'=>$uid]);
+        session(['u_id' => $uid]);
         $appid = 'wx9e2acea263c04928';
         $uri = urlencode("http://www.litingstudio.top/log");
-        $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=$uri&response_type=code&scope=snsapi_userinfo&state=$uid#wechat_redirect";
+        $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=$uri&response_type=code&scope=snsapi_userinfo&state=$uid#wechat_redirect";
         return redirect($url);
     }
+
     public function logs()
     {
-       $code =  $_GET['code'];
+        $code = $_GET['code'];
 
-       $id = "wx9e2acea263c04928";
-       $u_id = session('u_id');
-       $secret ="9b2e20f705ff4c29b18c02f5de8058d3";
-       $tokenurl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$id&secret=$secret&code=$code&grant_type=authorization_code";
-       $res = file_get_contents($tokenurl);
-       $token = json_decode($res,true)['access_token'];
-       $openid = json_decode($res,true)['openid'];
-
-       $userurl = "https://api.weixin.qq.com/sns/userinfo?access_token=$token&openid=$openid&lang=zh_CN";
-       $userinfo = file_get_contents($userurl);
-       $user = json_decode($userinfo,true);
-       print_r($user);
-       echo '<hr>';
+        $id = "wx9e2acea263c04928";
+        $u_id = session('u_id');
+        $secret = "9b2e20f705ff4c29b18c02f5de8058d3";
+        $tokenurl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$id&secret=$secret&code=$code&grant_type=authorization_code";
+        $res = file_get_contents($tokenurl);
+        $token = json_decode($res, true)['access_token'];
+        $openid = json_decode($res, true)['openid'];
+        $userurl = "https://api.weixin.qq.com/sns/userinfo?access_token=$token&openid=$openid&lang=zh_CN";
+        $userinfo = file_get_contents($userurl);
+        $user = json_decode($userinfo, true);
+        print_r($user);
+        echo '<hr>';
         echo '</br>';
-        echo '微信昵称：'.$user['nickname'];
-       echo '<hr>';
-       echo '</br>';
-        echo '微信头像：'."<img src=".$user['headimgurl']." />";
+        echo '微信昵称：' . $user['nickname'];
+        echo '<hr>';
+        echo '</br>';
+        echo '微信头像：' . "<img src=" . $user['headimgurl'] . " />";
         echo '<hr>';
         echo '</br>';
 
         $nickname = $user['nickname'];
         $headimgurl = $user['headimgurl'];
         $arr = [
-            'nickname'=>$nickname,
-            'headimgurl'=>$headimgurl,
-            'token' =>$token,
-            'openid'=>$openid,
-            'u_id'=>$u_id
+            'nickname' => $nickname,
+            'headimgurl' => $headimgurl,
+            'token' => $token,
+            'openid' => $openid,
+            'u_id' => $u_id
         ];
-        $res = Ws::where('openid','=',$openid)->first();
-        if(empty($res)){
+        $res = Ws::where('openid', '=', $openid)->first();
+        if (empty($res)) {
             $re = Ws::insert($arr);
-        }else{
+        } else {
             $arr = [
-                'nickname'=>$nickname,
-                'headimgurl'=>$headimgurl,
-                'token' =>$token,
-                'openid'=>$openid,
-                'u_id'=>$u_id
+                'nickname' => $nickname,
+                'headimgurl' => $headimgurl,
+                'token' => $token,
+                'openid' => $openid,
+                'u_id' => $u_id
             ];
-            $res = Ws::where('openid','=',$openid)->update($arr);
+            $res = Ws::where('openid', '=', $openid)->update($arr);
         }
 
         echo '<h1 style="color: red">扫码登录成功</h1>';
 
     }
+
     public function ing()
     {
         return view('index/image');
     }
+
+    public function save()
+    {
+        $phonenum = request()->input('phonenum');
+        $pwd = request()->input('pwd');
+        if (empty($phonenum)) {
+            echo '<p style="color: #f1b0b7">手机号不能为空!</p>';
+            echo '</br>';
+            echo '<a href="tel">点击重新绑定</a>';
+        } elseif (strlen($phonenum) != 11 || !is_numeric($phonenum)) {
+            echo '<p style="color: #f1b0b7">手机号必须为11位数字!</p>';
+            echo '</br>';
+            echo '<a href="tel">点击重新绑定</a>';
+        }else{
+            echo '</br>';
+          $uid = Wd::value('uid');
+            $arr = [
+                'phonenum' => $phonenum,
+                'pwd' => $pwd,
+                'uid'=>$uid,
+            ];
+            $res = Wd::where('uid','=',$uid)->update($arr);
+            echo '绑定手机号成功';
+            echo '<a href="index/ing">点击返回扫码登录</a>';
+        }
+    }
+
 //    public function reg()
 //    {
 //        return view('index/reg');
