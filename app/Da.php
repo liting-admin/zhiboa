@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Login extends Model
+class Da extends Model
 {
     public $primaryKey='id';
-    protected $table='user';
+    protected $table='weixin';
     public $timestamps=false;
 
     //白名单  表设计中不允许为空的

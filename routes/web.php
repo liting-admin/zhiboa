@@ -37,6 +37,9 @@ Route::post('index/insert','Index\IndexController@insert');
 Route::get('index/zhu','Index\IndexController@zhu');
 Route::post('index/index/save','Index\IndexController@save');
 Route::get('index/index/tel','Index\IndexController@tel');
+Route::get('index/form','Index\IndexController@rn');
+
+
 
 
 

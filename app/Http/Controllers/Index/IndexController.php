@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Reg as Wd;
 use App\Log as Ws;
 use App\Brand as Wr;
+use App\Da as We;
+use App\Login as Wv;
 use Illuminate\Http\Request;
 use QRcode;
 use think\response\Jsonp;
@@ -19,7 +21,8 @@ class IndexController extends Controller
 //    }
     public function shou()
     {
-        return view('index.shou');
+        $res = Wv::get();
+        return view('index.shou',['res'=>$res]);
     }
 
     public function tel()
@@ -333,4 +336,8 @@ if($res){
 //        $fen =Wd::pluck('uname');
 //        return $fen;
 //    }
+public function rn()
+{
+
+}
 }
