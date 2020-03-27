@@ -31,6 +31,14 @@ Route::get('tel','Index\IndexController@tel');
 Route::get('/index/login','Index\IndexController@login');
 Route::get('/index/tel','Index\IndexController@tel');
 Route::get('/index/index/ing','Index\IndexController@ing');
+Route::get('zhu','Index\IndexController@zhu');
+Route::post('index/ma','Index\IndexController@ma');
+Route::post('index/insert','Index\IndexController@insert');
+Route::get('index/zhu','Index\IndexController@zhu');
+Route::post('index/index/save','Index\IndexController@save');
+Route::get('index/index/tel','Index\IndexController@tel');
+
+
 
 
 

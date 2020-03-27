@@ -10,5 +10,6 @@
 <body>
 <img src="{{url('/storage/1.png')}}">
 <h2>请扫码登录</h2>
+<h4 style="color: red"><a href="/">扫完之后点击进入首页</a></h4>
 </body>
 </html>

@@ -6,6 +6,7 @@
 </head>
 <body>
 <form action="index/save" method="post">
+    <a href="zhu"><h2>手机号注册</h2></a>
 @csrf
     <table>
         <tr>
