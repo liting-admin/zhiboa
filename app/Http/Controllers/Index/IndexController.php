@@ -38,7 +38,7 @@ class IndexController extends Controller
 
     public function tel()
     {
-        return view('index/tel');
+        return view('index/login');
     }
 
     public function index()
@@ -159,14 +159,13 @@ class IndexController extends Controller
             return redirect('/');
 //            echo '<a href="index/ing">点击</a>';
         }else{
-            echo '<a href="zhu">点击重新登录</a>';
-            echo '</br>';
-            echo '登录失败';
+
+            echo '登录失败,密码或手机号错误';
         }
     }
     public function zhu()
     {
-        return view('index/trt');
+        return view('index/ty');
     }
 
     //发送手机号验证码
