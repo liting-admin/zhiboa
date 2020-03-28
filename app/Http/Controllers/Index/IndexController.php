@@ -7,23 +7,33 @@ use App\Log as Ws;
 use App\Brand as Wr;
 use App\Da as We;
 use App\Login as Wv;
+use App\Ci as Wi;
 use Illuminate\Http\Request;
 use QRcode;
 use think\response\Jsonp;
 use think\Session;
+use Illuminate\Support\Facades\Redis;
 
 class IndexController extends Controller
 {
-//    public function index(){
-//        $name = session('name');
-//        $data = Wd::where('uname','=',$name)->first();
-//        return view('index/index',['data'=>$data['id']]);
-//    }
+
     public function shou()
     {
-        $res = Wv::get();
-
-        return view('index/shou',['res'=>$res]);
+        $res1 = Wv::get();
+        $res=Wi::orderBy('cishu', 'desc')->pluck('names');
+        $a = $res[0];
+        $b = $res[1];
+        $c = $res[2];
+        $d = $res[3];
+        $e = $res[4];
+        $arr =[
+            'a'=>$a,
+            'b'=>$b,
+            'c'=>$c,
+            'd'=>$d,
+            'e'=>$e
+        ] ;
+        return view('index/shou',['res1'=>$res1,'a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e]);
     }
 
     public function tel()
@@ -255,24 +265,99 @@ if($res){
 
 }
 }
-
+//搜索
 public function rn()
 {
     $fen = request()->input('fen');
     $name = request()->input('name');
     $where=[];
     if($name){
-        $where[] =['weixin.name','like',"%$name%"];
+        $where[] =['weixin.names','like',"%$name%"];
     }
     if($fen){
         $where[] = ['weixin.r_id','like',"%$fen%"];
     }
-    $data = We::where($where)->first();
-if(!$data){
-    echo '此书不存在';
-    echo '</br>';
-    echo '<a href="/">点击返回</a>';
+    $data = We::where($where)->get();
+    //搜索小说存入redis  次数 及 取出搜索次数
+    $cacheKey='u:s';
+    foreach ($data as $v){
+        $shu1=$v['names'];
+        $arr=[
+            'names'=>$shu1,
+            'cishu'=>0
+        ];
+        if(Wi::where('names','=',$shu1)->first()){
+            $shu=Redis::Incr($shu1);
+            $key = Redis::setex($cacheKey,100*100*100,serialize($shu));
+            if(Redis::exists($cacheKey)){
+                $res = Redis::get($cacheKey);
+                $res1 = unserialize($res);
+            }
+            $arr =[
+                'names'=>$shu1,
+                'cishu'=>$res1
+            ];
+            $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
+            if(!$res1){
+                echo '搜索失败，请重试！';
+            }
+        }else{
+        $res3 = Wi::insert($arr);
+        if($res3){
+            $shu=Redis::Incr($shu1);
+            $key = Redis::setex($cacheKey,100*100*100,serialize($shu));
+            if(Redis::exists($cacheKey)){
+                $res = Redis::get($cacheKey);
+                $res1 = unserialize($res);
+            }
+            $arr =[
+                'names'=>$shu1,
+                'cishu'=>$res1
+            ];
+            $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
+            if(!$res1){
+                echo '搜索失败，请重试！';
+            }
+        }
+        }
+        if($data){
+            return view('index/list',['data'=>$data]);
+        }else{
+            echo '此书不存在';
+            echo '</br>';
+            echo '<a href="/">点击返回</a>';
+        }
+        }
 }
-    return view('index/lists',['data'=>$data]);
+//热词：小说前五名展示
+public function wer()
+{
+//    $res=Wi::pluck('cishu');
+//    $a = $res[0];
+//    $b = $res[1];
+//    $c = $res[2];
+//    $d = $res[3];
+//    $e = $res[4];
+//
+//    $res=Wi::pluck('names');
+//    $a1 = $res[0];
+//    $b1 = $res[1];
+//    $c1 = $res[2];
+//    $d1 = $res[3];
+//    $e1 = $res[4];
+//
+//   $a= $a1;
+//    $b =$b1;
+//    $c =$c1;
+//   $d= $d1;
+//    $e=$e1;
+$a = Wi::orderBy('cishu','desc')->get();
+$r = Wi::pluck('names');
+    print_r($a);die;
+ return view('index/shou',['a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e]);
+
+
 }
+
 }
+
