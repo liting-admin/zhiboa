@@ -29,7 +29,7 @@
         <div id="topLeft" class="topLeft cf"><ul><li class="navNormal authority"><span><a class="topLink" href="http://book.qq.com" target="_blank">QQ阅读</a><b></b></span><div class="topSubList client"><a class="cs_ico" href="http://chuangshi.qq.com" target="_blank">创世中文</a><a class="yq_ico" href="http://yunqi.qq.com" target="_blank">云起书院</a><a class="ds_ico" href="http://dushu.qq.com" target="_blank">QQ阅读</a><a class="bookIntnet" href="http://www.qq.com" target="_blank" onclick="pgvSendClick({hottag:'ISD.SHOW.INDEX.LINK03'});">腾讯网</a></div></li><li class="navNormal authority"><span><a class="topLink" href="https://yuedu.reader.qq.com/common/common/down/dist/index.html?actid=11822" target="_blank">客户端下载</a><b></b></span><!-- <div class="topSubList client"><a class="bookIntnet" href="https://yuedu.reader.qq.com/common/common/down/dist/index.html?actid=11822" target="_blank">客户端下载</a><a class="bookIos" href="http://book.qq.com/act/reader/index.html" target="_blank">苹果端</a></div> --></li></ul></div><!--登录前后容器--><div class="loginBox"><%if isLogin%><div class="login_after"><span class="navline">|</span><a class="exit" attr="click:ywlogout;" href="javascript:;">退出</a><a class="userName" href="http://account.book.qq.com/usercenter/index.html">欢迎您，<%=userInfo.Nickname ? userInfo.Nickname : ''%></a></div><%else%><div class="login_before"><span class="navline">|</span><!-- <a class="reg" target="_blank" href="http://zc.qq.com/chs/index.html?from=pt">注册</a> --><a class="login" attr="click:openLoginPopup;" href="javascript:;">登录/注册</a></div><%/if%></div><!--顶部右边区块--><div class="topRight"><%if isLogin%><a class="myreader" href="http://account.book.qq.com/userfavorite/index.html">我的书架<b></b></a><%else%><a class="myreader" href="javascript:;">最近阅读<b></b></a><%/if%><a class="user_center" href="http://account.book.qq.com">个人中心<b></b></a><a class="author_Zone" href="https://write.qq.com/?siteid=3">作家专区</a><span class="navline">|</span><a class="pay" href="http://account.book.qq.com/public/recharge.html" target="_blank">充值</a><!-- 我的书架的下拉列表 --><div class="bookrack"><%if isLogin%><p><span class="ccc">书架藏书：<%=userInfo.collectBookNum ? userInfo.collectBookNum : 0%>本</span></p><div class="nav_hover_list cf"><a href="http://account.book.qq.com/userfavorite/index.html?bookshelf_show=2">最近阅读</a><%if userInfo.bookshelfList && userInfo.bookshelfList.length%><%each userInfo.bookshelfList as bookshelf i%><a class="a_nobg" href="http://account.book.qq.com/userfavorite/index.html?Favoriteid=<%=bookshelf.groupId%>"><%=bookshelf.groupName%></a><%/each%><%/if%></div><%else%><!-- 最近阅读列表 --><div class="nav_hover_list cf"><%if userInfo.recentReadList && userInfo.recentReadList.length%><%each userInfo.recentReadList as book i%><a class="a_nobg" href="<%=book.bookUrl%>"><%=book.bookName%></a><%/each%><%/if%></div><%if !userInfo.recentReadList || userInfo.recentReadList.length === 0%><p>最近没有阅读书</p><%/if%><%/if%></div><!-- 个人中心的下拉列表 --><div class="user_menu"><div class="nav_hover_list cf"><a href="http://account.book.qq.com/userfavorite/index.html">我的书架</a><a href="http://account.book.qq.com/usercenter/index.html">账户设置</a><a class="a_nobg" href="http://account.book.qq.com/usermoney/index.html">账务中心 </a><a class="a_nobg" href="https://write.qq.com/?siteid=3">作家专区</a></div></div><!--新短消息提示--><%if isLogin%><div id="topnav_msg" style="display:none;"><div id="pointy_msg"></div><p><a class="red2" href="http://account.book.qq.com/usermessage/index.html">有新短消息</a></p><a id="close_msg" href="javascript:" title="关闭">关闭</a></div><%/if%></div></div></textarea><script type="text/javascript">    var getUserInfoAjaxUrl = "/public/showhead.html", //获取用户信息
         getUserNewMsgUrl = "http://account.book.qq.com/usermessage/getMessageNew.html",
         webSite = "book";
-    
+    23456789098654323456789864
     var addToBookshelfAjaxUrl = "/public/addToBookshelf.html";
 
     $(function(){
@@ -43,44 +43,26 @@
 <div class="logo fl">
 <a href="http://book.qq.com"><img alt="腾讯文学，文字之美，感动心灵！" src="static/picture/txwxlogo.jpg"></a>
 </div>
-<form action="/backend/auditList" method="get">
+
+<div >
+<form action="/index/form" method="get">
   <table class="search_tab">
     <tr>
       <th width="120">选择分类:</th>
       <td>
-        <select name="class" >
-          <option value="">全部</option>
-
-
-
+        <select name="fen" >
+          @foreach($res as $v)
+<option value="{{$v->r_id}}" @if($res=="{{$v->r_id}}") selected @endif  class='all'>{{$v->r_name}}</option>
+@endforeach
         </select>
       </td>
       <th width="70">文章标题:</th>
       <!--查询关键词-->
-      <td><input type="text" name="keywords" placeholder="文章标题"></td>
-      <td><input type="submit" name="sub" value="查询"></td>
+      <td><input type="text" name="name" placeholder="文章标题"></td>
+      <td ><input type="submit" name="sub" value="查询"></td>
     </tr>
   </table>
 </form>
-<div class="titleSearch fl cf">
-<div class="searchClass" id="searchClass">
-<em type="all" id="currentSiteBtn">
-<select>
-@foreach($res as $v)
-<option value="{{$v->r_id}}" @if($res=="{{$v->r_id}}") selected @endif  class='all'>{{$v->r_name}}</option>
-@endforeach
-</select>
-
-</em>
-<div id="searchSiteList" class="searchClass_SubBox" style="display:none;">
-
-<a href="javascript:" type="all" >全部</a>
-<a href="javascript:" type="chuangshi" >创世</a>
-<a href="javascript:" type="yunqi" >云起</a>
-<a href="javascript:" type="dushu" >图书</a></div
-></div>
-<input id="searchInputBySite" type="text" class="clearInput" style="color: rgb(153, 153, 153);"  placeholder="请输入作者或书籍名称"  value=""/>
-<input id="searchBySiteBtn" type="button" class="searchBtn">
 <script>
 $('#searchBySiteBtn').click(function(){
     $('#searchInputBySite').val();
@@ -124,7 +106,7 @@ $('#searchBySiteBtn').click(function(){
 			if(document.referrer){
 	            url += '&ref='+ encodeURIComponent(document.referrer);
 	        }
-			
+
 			new Image().src = url;
 		}
 		_requestStatLog();
