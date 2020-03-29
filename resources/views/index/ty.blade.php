@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>后台登录</title>
+    <title>后台注册</title>
     <meta name="author" content="DeathGhost" />
     <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
     <style>
@@ -22,8 +22,8 @@
     @csrf
 <dl class="admin_login">
     <dt>
-        <strong>站点后台管理系统</strong>
-        <em>Management System</em>
+        <strong>注册</strong>
+        <em> <h2><a href="tel">去登录</a> </h2></em>
     </dt>
     <dd class="user_icon">
         <input type="text" placeholder="手机号" name="phonenum"  id="yu" class="login_txtbx"/>

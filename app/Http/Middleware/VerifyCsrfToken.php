@@ -27,7 +27,9 @@ class VerifyCsrfToken extends Middleware
         'index/save',
         'index/zhu',
         'index/ma',
-        'index/insert'
+        'index/insert',
+        'index/a',
+        'index/ion'
 
     ];
 }

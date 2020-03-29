@@ -39,6 +39,13 @@ Route::post('index/index/save','Index\IndexController@save');
 Route::get('index/index/tel','Index\IndexController@tel');
 Route::get('index/form','Index\IndexController@rn');
 Route::get('index/re','Index\IndexController@wer');
+Route::post('index/ion','Index\IndexController@ion');
+Route::get('index/aa/{res}','Index\IndexController@aa');
+Route::get('index/pai','Index\IndexController@pai');
+
+
+
+
 
 
 

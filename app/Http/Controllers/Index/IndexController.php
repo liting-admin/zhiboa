@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Redis;
 
 class IndexController extends Controller
 {
-
+//热词：小说前五名展示
     public function shou()
     {
         $res1 = Wv::get();
@@ -26,14 +26,10 @@ class IndexController extends Controller
         $c = $res[2];
         $d = $res[3];
         $e = $res[4];
-        $arr =[
-            'a'=>$a,
-            'b'=>$b,
-            'c'=>$c,
-            'd'=>$d,
-            'e'=>$e
-        ] ;
-        return view('index/shou',['res1'=>$res1,'a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e]);
+        //排行展示
+        $res2 = Wi::where('fen','=',2)->orderBy('cishu','desc')->get();
+        $res3 = Wi::where('fen','=',3)->orderBy('cishu','desc')->get();
+        return view('index/shou',['res1'=>$res1,'a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e,'res2'=>$res2,'res3'=>$res3]);
     }
 
     public function tel()
@@ -129,7 +125,7 @@ class IndexController extends Controller
 
     public function ing()
     {
-        return view('index/image');
+        return view('index/lists');
     }
 
     public function save()
@@ -283,7 +279,8 @@ public function rn()
         $shu1=$v['names'];
         $arr=[
             'names'=>$shu1,
-            'cishu'=>0
+            'cishu'=>0,
+            'fen'=>$fen
         ];
         if(Wi::where('names','=',$shu1)->first()){
             $shu=Redis::Incr($shu1);
@@ -294,7 +291,8 @@ public function rn()
             }
             $arr =[
                 'names'=>$shu1,
-                'cishu'=>$res1
+                'cishu'=>$res1,
+                'fen'=>$fen
             ];
             $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
             if(!$res1){
@@ -311,7 +309,8 @@ public function rn()
             }
             $arr =[
                 'names'=>$shu1,
-                'cishu'=>$res1
+                'cishu'=>$res1,
+                'fen'=>$fen
             ];
             $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
             if(!$res1){
@@ -328,34 +327,14 @@ public function rn()
         }
         }
 }
-//热词：小说前五名展示
-public function wer()
-{
-//    $res=Wi::pluck('cishu');
-//    $a = $res[0];
-//    $b = $res[1];
-//    $c = $res[2];
-//    $d = $res[3];
-//    $e = $res[4];
-//
-//    $res=Wi::pluck('names');
-//    $a1 = $res[0];
-//    $b1 = $res[1];
-//    $c1 = $res[2];
-//    $d1 = $res[3];
-//    $e1 = $res[4];
-//
-//   $a= $a1;
-//    $b =$b1;
-//    $c =$c1;
-//   $d= $d1;
-//    $e=$e1;
-$a = Wi::orderBy('cishu','desc')->get();
-$r = Wi::pluck('names');
-    print_r($a);die;
- return view('index/shou',['a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e]);
 
-
+//分类详情
+public function ion(){
+        $a = request()->input('a');
+        return $a;
+}
+public function aa($res){
+        echo 'qqqq';
 }
 
 }

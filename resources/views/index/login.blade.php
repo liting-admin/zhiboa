@@ -33,7 +33,7 @@
 <dl class="admin_login">
     <dt>
         <strong>登录</strong>
-        <em>Management System</em>
+        <em>  <a href="zhu"><h2>点击进入手机号注册</h2></a></em>
     </dt>
     <dd class="user_icon">
         <input type="text" placeholder="手机号" name="phonenum" class="login_txtbx"/>
