@@ -29,6 +29,7 @@ class IndexController extends Controller
         //排行展示
         $res2 = Wi::where('r_id','=',2)->orderBy('cishu','desc')->get();
         $res3 = Wi::where('r_id','=',3)->orderBy('cishu','desc')->get();
+        
         $xiong = '熊出没';
         $yang = '喜羊羊与灰太狼';
         $kai = '铠甲勇士';
