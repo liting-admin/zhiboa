@@ -8,6 +8,8 @@ use App\Brand as Wr;
 use App\Da as We;
 use App\Login as Wv;
 use App\Ci as Wi;
+use App\So as Wz;
+use App\Yu as Wu;
 use Illuminate\Http\Request;
 use QRcode;
 use think\response\Jsonp;
@@ -20,24 +22,25 @@ class IndexController extends Controller
     public function shou()
     {
         $res1 = Wv::get();
-        $res=Wi::orderBy('cishu', 'desc')->pluck('names');
+        $res = Wi::orderBy('cishu', 'desc')->pluck('names');
         $a = $res[0];
         $b = $res[1];
         $c = $res[2];
         $d = $res[3];
         $e = $res[4];
         //排行展示
-        $res2 = Wi::where('r_id','=',2)->orderBy('cishu','desc')->get();
-        $res3 = Wi::where('r_id','=',3)->orderBy('cishu','desc')->get();
-        
+        $res2 = Wi::where('r_id', '=', 2)->orderBy('cishu', 'desc')->get();
+        $res3 = Wi::where('r_id', '=', 3)->orderBy('cishu', 'desc')->get();
+
         $xiong = '熊出没';
         $yang = '喜羊羊与灰太狼';
         $kai = '铠甲勇士';
         $zhu = '猪猪侠';
         $qu = '爸爸去哪儿';
         $wang = '王者荣耀';
-
-        return view('index/shou',['res1'=>$res1,'a'=>$a,'b'=>$b,'c'=>$c,'d'=>$d,'e'=>$e,'res2'=>$res2,'res3'=>$res3,'xx'=>$xiong,'yy'=>$yang,'kk'=>$kai,'zhu'=>$zhu,'qu'=>$qu,'ww'=>$wang]);
+//月投票
+     $info = Wu::where('r_id', '=', 2)->orderBy('tou','desc')->get();
+        return view('index/shou', ['res1' => $res1, 'a' => $a, 'b' => $b, 'c' => $c, 'd' => $d, 'e' => $e, 'res2' => $res2, 'res3' => $res3, 'xx' => $xiong, 'yy' => $yang, 'kk' => $kai, 'zhu' => $zhu, 'qu' => $qu, 'ww' => $wang,'info'=>$info]);
     }
 
     public function tel()
@@ -57,8 +60,8 @@ class IndexController extends Controller
         $obj = new QRcode();
         $uid = uniqid();
 //        echo $uid;die;
-            $url_s = "http://www.litingstudio.top/image?uid=" . $uid;
-            return redirect('index/ing');
+        $url_s = "http://www.litingstudio.top/image?uid=" . $uid;
+        return redirect('index/ing');
 //        $obj->png($url_s,storage_path('app/public/1.png'));
 
     }
@@ -84,7 +87,7 @@ class IndexController extends Controller
         $res = file_get_contents($tokenurl);
         $token = json_decode($res, true)['access_token'];
         $openid = json_decode($res, true)['openid'];
-        session(['openid'=>$openid]);
+        session(['openid' => $openid]);
         $userurl = "https://api.weixin.qq.com/sns/userinfo?access_token=$token&openid=$openid&lang=zh_CN";
         $userinfo = file_get_contents($userurl);
         $user = json_decode($userinfo, true);
@@ -111,7 +114,7 @@ class IndexController extends Controller
         $res = Ws::where('openid', '=', $openid)->first();
         if (empty($res)) {
             $re = Ws::insert($arr);
-        } else{
+        } else {
             $arr = [
                 'nickname' => $nickname,
                 'headimgurl' => $headimgurl,
@@ -122,10 +125,10 @@ class IndexController extends Controller
             $res = Ws::where('openid', '=', $openid)->update($arr);
 
         }
-        if(empty($phonenum)){
+        if (empty($phonenum)) {
             echo '你还没有绑定手机号<a href="tel"><h2 style="color: red">点击去绑定</h2></a>';
             die;
-        }else{
+        } else {
             echo '<h1 style="color: red">扫码登录成功</h1>';
             return redirect('/');
         }
@@ -162,11 +165,12 @@ class IndexController extends Controller
             echo '正在为你跳转到首页....';
             return redirect('/');
 //            echo '<a href="index/ing">点击</a>';
-        }else{
+        } else {
 
             echo '登录失败,密码或手机号错误';
         }
     }
+
     public function zhu()
     {
         return view('index/ty');
@@ -176,8 +180,8 @@ class IndexController extends Controller
     public function ma()
     {
         $tel = request()->input('tel');
-        $str = rand(1000,9999);
-        session(['str'=>$str]);
+        $str = rand(1000, 9999);
+        session(['str' => $str]);
         $host = "http://dingxin.market.alicloudapi.com";
         $path = "/dx/sendSms";
         $method = "POST";
@@ -195,167 +199,268 @@ class IndexController extends Controller
         curl_setopt($curl, CURLOPT_FAILONERROR, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HEADER, false);
-        if (1 == strpos("$".$host, "https://"))
-        {
+        if (1 == strpos("$" . $host, "https://")) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         }
-       echo curl_exec($curl);
+        echo curl_exec($curl);
 
     }
-public function insert()
-{
-    $phonenum = request()->input('phonenum');
-    $zheng = request()->input('zheng');
-    $pwd = request()->input('pwd');
-    $pwds = request()->input('pwds');
-    $tr = session('str');
-    $tt = Wr::where('phonenum','=',$phonenum)->first();
-    if($tt){
-        echo '手机号已存在';
-        echo '</br>';
-        echo '<a href="zhu">点击重新注册</a>';
-        die;
-    }
-    if($tr!=$zheng) {
-        echo '验证码错误';
-        echo '</br>';
-        echo '<a href="zhu">点击重新注册</a>';
-        die;
 
-    }
-    if(empty($phonenum)){
-        echo '<a href="zhu">点击重新注册</a>';
-        echo '</br>';
-        exit('手机号不能为空');
-
-    }
-    if(empty($zheng)){
-        echo '<a href="zhu">点击重新注册</a>';
-        echo '</br>';
-        exit('验证码不能为空');
-
-    }
-    if(empty($pwd)){
-        echo '<a href="zhu">点击重新注册</a>';
-        echo '</br>';
-        exit('密码不能为空');
-
-    }
-    if(empty($pwds)){
-        echo '<a href="zhu">点击重新注册</a>';
-        echo '</br>';
-        exit('确认密码不能为空');
-
-    }
-    if($pwd!=$pwds){
-        echo '两次密码不一致';
-        echo '</br>';
-        echo '<a href="zhu">点击重新注册</a>';
-        die;
-}
-$arr = [
-    'phonenum'=>$phonenum,
-    'pwd'=>$pwd,
-    'zheng'=>$zheng,
-    'pwds'=>$pwds
-];
-$res = Wr::insert($arr);
-if($res){
-    echo '注册成功！';
-    echo '</br>';
-    echo '<a href="tel">点击到手机号登录页面</a>';
-
-}
-}
-//搜索
-public function rn()
-{
-    $fen = request()->input('fen');
-    $name = request()->input('name');
-    $res = We::where('names','=',$name)->first();
-    $zuo = We::where('names','=',$name)->value('name');
-    if(!$res){
-        echo '<h4>搜索的内容不存在,</h4>';
-        echo '<br>';
-        echo '<h4>正在为你返回上一页面.....</h4>';
-        header("refresh:2,url='/'");
-        die;
-    }
-    $where=[];
-    if($name){
-        $where[] =['weixin.names','like',"%$name%"];
-    }
-    if($fen){
-        $where[] = ['weixin.r_id','like',"%$fen%"];
-    }
-    $data = We::where($where)->get();
-    //搜索小说存入redis  次数 及 取出搜索次数
-    $cacheKey='u:s';
-    foreach ($data as $v){
-        $shu1=$v['names'];
-        $arr=[
-            'names'=>$shu1,
-            'cishu'=>0,
-            'r_id'=>$fen,
-            'name'=>$zuo
-        ];
-        if(Wi::where('names','=',$shu1)->first()){
-            $shu=Redis::Incr($shu1);
-            $key = Redis::setex($cacheKey,100*100*100,serialize($shu));
-            if(Redis::exists($cacheKey)){
-                $res = Redis::get($cacheKey);
-                $res1 = unserialize($res);
-            }
-            $arr =[
-                'names'=>$shu1,
-                'cishu'=>$res1,
-                'r_id'=>$fen,
-                'name'=>$zuo
-            ];
-            $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
-            if(!$res1){
-                echo '搜索失败，请重试！';
-            }
-        }else{
-        $res3 = Wi::insert($arr);
-        if($res3){
-            $shu=Redis::Incr($shu1);
-            $key = Redis::setex($cacheKey,100*100*100,serialize($shu));
-            if(Redis::exists($cacheKey)){
-                $res = Redis::get($cacheKey);
-                $res1 = unserialize($res);
-            }
-            $arr =[
-                'names'=>$shu1,
-                'cishu'=>$res1,
-                'r_id'=>$fen,
-                'name'=>$zuo
-            ];
-            $res = Wi::where('names','=',$shu1)->update(['cishu'=>$res1]);
-            if(!$res1){
-                echo '搜索失败，请重试！';
-            }
-        }
-        }
-
-        if($data){
-            return view('index/list',['data'=>$data]);
-        }else{
-            echo '此书不存在';
+    public function insert()
+    {
+        $phonenum = request()->input('phonenum');
+        $zheng = request()->input('zheng');
+        $pwd = request()->input('pwd');
+        $pwds = request()->input('pwds');
+        $tr = session('str');
+        $tt = Wr::where('phonenum', '=', $phonenum)->first();
+        if ($tt) {
+            echo '手机号已存在';
             echo '</br>';
-            echo '<a href="/">点击返回</a>';
+            echo '<a href="zhu">点击重新注册</a>';
+            die;
         }
+        if ($tr != $zheng) {
+            echo '验证码错误';
+            echo '</br>';
+            echo '<a href="zhu">点击重新注册</a>';
+            die;
+
         }
-}
+        if (empty($phonenum)) {
+            echo '<a href="zhu">点击重新注册</a>';
+            echo '</br>';
+            exit('手机号不能为空');
+
+        }
+        if (empty($zheng)) {
+            echo '<a href="zhu">点击重新注册</a>';
+            echo '</br>';
+            exit('验证码不能为空');
+
+        }
+        if (empty($pwd)) {
+            echo '<a href="zhu">点击重新注册</a>';
+            echo '</br>';
+            exit('密码不能为空');
+
+        }
+        if (empty($pwds)) {
+            echo '<a href="zhu">点击重新注册</a>';
+            echo '</br>';
+            exit('确认密码不能为空');
+
+        }
+        if ($pwd != $pwds) {
+            echo '两次密码不一致';
+            echo '</br>';
+            echo '<a href="zhu">点击重新注册</a>';
+            die;
+        }
+        $arr = [
+            'phonenum' => $phonenum,
+            'pwd' => $pwd,
+            'zheng' => $zheng,
+            'pwds' => $pwds
+        ];
+        $res = Wr::insert($arr);
+        if ($res) {
+            echo '注册成功！';
+            echo '</br>';
+            echo '<a href="tel">点击到手机号登录页面</a>';
+
+        }
+    }
+
+//搜索
+    public function rn()
+    {
+        $fen = request()->input('fen');
+        $name = request()->input('name');
+
+        $res = We::where('names', '=', $name)->first();
+        $zuo = We::where('names', '=', $name)->value('name');
+        if (!$res) {
+            echo '<h4>搜索的内容不存在,</h4>';
+            echo '<br>';
+            echo '<h4>正在为你返回上一页面.....</h4>';
+            header("refresh:2,url='/'");
+            die;
+        }
+        $where = [];
+        if ($name) {
+            $where[] = ['weixin.names', 'like', "%$name%"];
+        }
+        if ($fen) {
+            $where[] = ['weixin.r_id', 'like', "%$fen%"];
+        }
+        $data = We::where($where)->get();
+        //搜索小说存入redis  次数 及 取出搜索次数
+        $cacheKey = 'u:s';
+        foreach ($data as $v) {
+            $shu1 = $v['names'];
+            $arr = [
+                'names' => $shu1,
+                'cishu' => 0,
+                'r_id' => $fen,
+                'name' => $zuo
+            ];
+            if (Wi::where('names', '=', $shu1)->first()) {
+                $shu = Redis::Incr($shu1);
+                $key = Redis::setex($cacheKey, 100 * 100 * 100, serialize($shu));
+                if (Redis::exists($cacheKey)) {
+                    $res = Redis::get($cacheKey);
+                    $res1 = unserialize($res);
+                }
+                $arr = [
+                    'names' => $shu1,
+                    'cishu' => $res1,
+                    'r_id' => $fen,
+                    'name' => $zuo
+                ];
+                $res = Wi::where('names', '=', $shu1)->update(['cishu' => $res1]);
+                if (!$res1) {
+                    echo '搜索失败，请重试！';
+                }
+            } else {
+                $res3 = Wi::insert($arr);
+                if ($res3) {
+                    $shu = Redis::Incr($shu1);
+                    $key = Redis::setex($cacheKey, 100 * 100 * 100, serialize($shu));
+                    if (Redis::exists($cacheKey)) {
+                        $res = Redis::get($cacheKey);
+                        $res1 = unserialize($res);
+                    }
+                    $arr = [
+                        'names' => $shu1,
+                        'cishu' => $res1,
+                        'r_id' => $fen,
+                        'name' => $zuo
+                    ];
+                    $res = Wi::where('names', '=', $shu1)->update(['cishu' => $res1]);
+                    if (!$res1) {
+                        echo '搜索失败，请重试！';
+                    }
+                }
+            }
+
+            if ($data) {
+                return view('index/list', ['data' => $data]);
+            } else {
+                echo '此书不存在';
+                echo '</br>';
+                echo '<a href="/">点击返回</a>';
+            }
+        }
+    }
 
 //分类详情
-public function xi()
-{
-    $xi = $_GET['id'];
-    $res = We::where('names','=',$xi)->first();
+    public function xi()
+    {
+        $xi = $_GET['id'];
+        $res = We::where('names', '=', $xi)->first();
 //    print_r($res);die;
-    return view('index/reg',['res'=>$res]);
-}
+        return view('index/reg', ['res' => $res]);
+    }
+
+//月投票
+    public function ai()
+    {
+        if(empty(session('zuo'))){
+            echo '<h4>你还没有登录.....</h4>';
+            header("refresh:2,url='index/lg'");
+            die;
+        }
+        $xi = $_GET['id'];
+        return view('index/tou', ['xi' => $xi]);
+    }
+    public function ci()
+    {
+    $tou=request()->input('r');
+        $name = session('zuo');
+        $tou1= Wu::where('name','=',$name)->value('tou');
+
+        if($tou==100){
+            $tou1 = $tou1+100;
+        }else if($tou==200){
+            $tou1= $tou1+200;
+        }else if($tou==300){
+            $tou1 = $tou1+300;
+        }else if($tou==400){
+            $tou1 = $tou1+400;
+        }else if($tou==500){
+            $tou1 = $tou1+500;
+        }
+        $res1 = Wi::where('name','=',$name)->value('names');
+        $res3 = Wi::where('name','=',$name)->value('r_id');
+
+        $arr = [
+            'name'=>$name,
+            'tou'=>$tou1,
+            'names'=>$res1,
+            'r_id'=>$res3
+
+        ];
+        $res = Wu::where('name','=',$name)->first();
+
+        if(!$res){
+            Wu::insert($arr);
+
+        }else{
+            Wu::where('name','=',$name)->update(['tou'=>$tou1]);
+
+        }
+    }
+    public function ais()
+    {
+        $zuo = request()->input('zuo');
+        $pwd = request()->input('pwd');
+        $pwds = request()->input('pwds');
+        if($pwd!=$pwds){
+            echo '两次密码不一致';
+            die;
+        }
+        $arr = [
+            'zuo'=>$zuo,
+            'pwd'=>$pwd,
+            'pwds'=>$pwds
+        ];
+       $res =  Wz::insert($arr);
+        if($res){
+            echo '注册成功...';
+            header("refresh:2,url='index/lg'");
+        }
+    }
+    public function lg()
+    {
+        return view('index/lg');
+    }
+    public function sa()
+    {
+        $zuo = request()->input('zuo');
+        $pwd = request()->input('pwd');
+        $res = Wz::where('zuo','=',$zuo)->where('pwd','=',$pwd)->first();
+        if(!$res){
+            echo '密码或用户名错误...';
+            header("refresh:2,url='index/zz'");
+            die;
+        }
+        $res1 = $res['zuo'];
+        if($res){
+            session(['zuo'=>$res1]);
+           return view('index/tou');
+        }
+    }
+    public function zz(){
+        return view('index/lg');
+    }
+    public function zz1(){
+        return view('index/po');
+    }
+    public function st()
+    {
+        echo session('zuo');
+    }
 }
 

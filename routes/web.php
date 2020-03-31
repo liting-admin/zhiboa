@@ -43,6 +43,39 @@ Route::post('index/ion','Index\IndexController@ion');
 Route::get('index/aa/{res}','Index\IndexController@aa');
 Route::get('index/pai','Index\IndexController@pai');
 Route::get('index/xi','Index\IndexController@xi');
+Route::get('/index/index/ai','Index\IndexController@ai');
+Route::post('index/ci','Index\IndexController@ci');
+Route::post('index/ais','Index\IndexController@ais');
+Route::get('index/lg','Index\IndexController@lg');
+Route::get('index/index/lg','Index\IndexController@lg');
+Route::post('index/sa','Index\IndexController@sa');
+Route::get('index/index/index/lg','Index\IndexController@lg');
+Route::post('index/index/index/index/sa','Index\IndexController@sa');
+Route::post('index/index/index/sa','Index\IndexController@sa');
+Route::post('index/index/index/index/index/sa','Index\IndexController@sa');
+Route::post('index/index/index/index/index/index/sa','Index\IndexController@sa');
+Route::post('index/index/index/index/index/index/index/sa','Index\IndexController@sa');
+Route::post('index/index/index/index/index/index/index/index/sa','Index\IndexController@sa');
+Route::get('index/lg','Index\IndexController@lg');
+Route::get('index/index/index/index/index/zz','Index\IndexController@zz');
+Route::get('index/index/index/index/index/zuo','Index\IndexController@zz1');
+Route::get('index/index/index/index/index/index/zuo','Index\IndexController@zz1');
+Route::get('index/index/index/zuo','Index\IndexController@zz1');
+Route::get('index/index/index/index/zuo','Index\IndexController@zz1');
+Route::get('index/st','Index\IndexController@st');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
